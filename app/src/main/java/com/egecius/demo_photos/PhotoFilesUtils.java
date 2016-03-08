@@ -13,14 +13,14 @@ public class PhotoFilesUtils {
 	/*Method to create a file to send to the default camera so it knows where to
 		*save the created image
 		*/
-	public File createFileForDefaultCamera(){
+	public File createFileForDefaultCamera() {
 		// Location where the photos will be stored. The created images will be shared
 		// between applications and persist after app has been uninstalled.
 		//File mediaStorageDir = new File(Environment.getExternalStorageDirectory()+"/FiatAccompli/");
-		File mediaStorageDir = new File(Environment.getExternalStorageDirectory()+"/DCIM/Camera");
+		File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
 		// Create the storage directory if it does not exist
-		if (! mediaStorageDir.exists()){
-			if (! mediaStorageDir.mkdirs()){
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
 				Log.d("CreateFile", "Failed to create photo gallery directory");
 				return null;
 			}
@@ -31,9 +31,9 @@ public class PhotoFilesUtils {
 		String imageFileName = "JPEG_" + timeStamp + "_";
 
 		File image = null;
-		try{
+		try {
 			image = File.createTempFile(imageFileName, ".jpg", mediaStorageDir);
-		}catch(IOException e){
+		} catch (IOException e) {
 			Log.d("MainActivity", "Failed to create photo file");
 			e.printStackTrace();
 		}

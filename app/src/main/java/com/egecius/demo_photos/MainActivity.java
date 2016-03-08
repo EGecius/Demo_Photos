@@ -8,29 +8,39 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+
 
 	PhotoFilesUtils photoFilesUtils = new PhotoFilesUtils();
 
 	private File currentImageFile;
 	/** Request code */
 	static final int REQUEST_IMAGE_CAPTURE = 0;
+	private ImageView imageView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initUi();
+	}
+
+	private void initUi() {
 		setContentView(R.layout.activity_main);
 		setupButton();
+		imageView = (ImageView) findViewById(R.id.image);
 	}
 
 	private void setupButton() {
 		findViewById(R.id.requestCamera).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				requestDefaultCamera();
+				takePictureWithCameraApp();
 			}
 		});
 	}
@@ -38,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
 	/** requests the default camera of the device through an intent
 	 * that also saves the photo to file
 	 */
-	private void requestDefaultCamera() {
-		Log.v("Eg:MainActivity:41", "requestDefaultCamera");
+	private void takePictureWithCameraApp() {
+		Log.v("Eg:MainActivity:41", "takePictureWithCameraApp");
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		ComponentName componentName = takePictureIntent.resolveActivity(getPackageManager());
 
-		Log.i("Eg:MainActivity:46", "requestDefaultCamera componentName " + componentName);
+		Log.i("Eg:MainActivity:46", "takePictureWithCameraApp componentName " + componentName);
 
 		if (componentName != null) {
 			//create the file for where the photo should be saved
@@ -54,11 +64,10 @@ public class MainActivity extends AppCompatActivity {
 				startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 			}
 		} else {
-			Log.i("Eg:MainActivity:57", "requestDefaultCamera componentName " + componentName);
+			Log.i("Eg:MainActivity:57", "takePictureWithCameraApp componentName " + componentName);
 		}
 	}
 
-	//ACTIVITY LIFECYCLE METHODS
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
@@ -68,17 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
 			boolean isResultOk = isResultOk(resultCode);
 
+			showImage();
+
 			Log.i("Eg:MainActivity:50", "onActivityResult requestCode " + requestCode);
 			Log.i("Eg:MainActivity:52", "onActivityResult isResultOk " + isResultOk);
+		}
+	}
 
-			//displayImage();
-			//displayThumbnails();y);
-		}
-		else{
-			//Delete the file as it is blank, no picture was taken
-//			currentImageFile.delete();
-//			finish();
-		}
+	private void showImage() {
+		Picasso.with(getApplicationContext()).load(currentImageFile).into(imageView);
 	}
 
 	private boolean isResultOk(int resultCode) {
