@@ -1,10 +1,7 @@
 package com.egecius.demo_photos;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,16 +11,18 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import photo.ImageGetterImpl;
+import photo.ImageGetterInterface;
+import photo.PhotoFilesUtils;
+import photo.PhotoUploader;
 import retrofit.RetrofitSetup;
 
 public class MainActivity extends AppCompatActivity {
-	
-	PhotoFilesUtils photoFilesUtils = new PhotoFilesUtils();
-	PhotoUploader photoUploader = new PhotoUploader(new RetrofitSetup().getService());
 
-	private File currentImageFile;
-	/** Request code */
-	static final int REQUEST_IMAGE_CAPTURE = 0;
+	private PhotoUploader photoUploader = new PhotoUploader(new RetrofitSetup().getService());
+	private ImageGetterInterface imageGetter = new ImageGetterImpl();
+	private File currentImageFile = new PhotoFilesUtils().createFileForDefaultCamera();
+
 	private ImageView imageView;
 
 	@Override
@@ -42,61 +41,28 @@ public class MainActivity extends AppCompatActivity {
 		findViewById(R.id.requestCamera).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				takePictureWithCameraApp();
+				imageGetter.takePhotoWithCameraApp(MainActivity.this, currentImageFile);
 			}
 		});
 	}
 
-	/** requests the default camera of the device through an intent
-	 * that also saves the photo to file
-	 */
-	private void takePictureWithCameraApp() {
-		Log.v("Eg:MainActivity:41", "takePictureWithCameraApp");
-		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		ComponentName componentName = takePictureIntent.resolveActivity(getPackageManager());
-
-		Log.i("Eg:MainActivity:46", "takePictureWithCameraApp componentName " + componentName);
-
-		if (componentName != null) {
-			//create the file for where the photo should be saved
-			currentImageFile = photoFilesUtils.createFileForDefaultCamera();
-			//if file is not null add it to the intent and start it.
-			if (currentImageFile != null) {
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentImageFile));
-				startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-			}
-		} else {
-			Log.i("Eg:MainActivity:57", "takePictureWithCameraApp componentName " + componentName);
-		}
-	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-
-
-			Log.v("Eg:MainActivity:47", "onActivityResult");
-
-			boolean isResultOk = isResultOk(resultCode);
-
+		Log.v("Eg:MainActivity:55", "onActivityResult");
+		if (resultCode == RESULT_OK && requestCode == ImageGetterInterface.REQUEST_IMAGE_CAPTURE){
 			showImage();
-			uploadImage();
-
-			Log.i("Eg:MainActivity:50", "onActivityResult requestCode " + requestCode);
-			Log.i("Eg:MainActivity:52", "onActivityResult isResultOk " + isResultOk);
+//			uploadImage();
 		}
-	}
-
-	private void uploadImage() {
-		photoUploader.upload(currentImageFile);
 	}
 
 	private void showImage() {
+		Log.v("Eg:MainActivity:61", "showImage currentImageFile " + currentImageFile);
 		Picasso.with(getApplicationContext()).load(currentImageFile).into(imageView);
 	}
 
-	private boolean isResultOk(int resultCode) {
-		return resultCode == RESULT_OK;
+	private void uploadImage() {
+		Log.v("Eg:MainActivity:67", "uploadImage");
+		photoUploader.upload(currentImageFile);
 	}
 
 }

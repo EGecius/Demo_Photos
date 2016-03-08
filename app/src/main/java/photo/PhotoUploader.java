@@ -1,4 +1,4 @@
-package com.egecius.demo_photos;
+package photo;
 
 import android.util.Log;
 
