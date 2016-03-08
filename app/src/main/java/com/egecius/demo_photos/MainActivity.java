@@ -11,8 +11,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
-import photo.ImageGetterImpl;
-import photo.ImageGetterInterface;
+import photo.PhotoGetterImpl;
+import photo.PhotoGetterInterface;
 import photo.PhotoFilesUtils;
 import photo.PhotoUploader;
 import retrofit.RetrofitSetup;
@@ -20,7 +20,7 @@ import retrofit.RetrofitSetup;
 public class MainActivity extends AppCompatActivity {
 
 	private PhotoUploader photoUploader = new PhotoUploader(new RetrofitSetup().getService());
-	private ImageGetterInterface imageGetter = new ImageGetterImpl();
+	private PhotoGetterInterface imageGetter = new PhotoGetterImpl();
 	private File currentImageFile = new PhotoFilesUtils().createFileForDefaultCamera();
 
 	private ImageView imageView;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		Log.v("Eg:MainActivity:55", "onActivityResult");
-		if (resultCode == RESULT_OK && requestCode == ImageGetterInterface.REQUEST_IMAGE_CAPTURE){
+		if (resultCode == RESULT_OK && requestCode == PhotoGetterInterface.REQUEST_IMAGE_CAPTURE){
 			showImage();
 //			uploadImage();
 		}

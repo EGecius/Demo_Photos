@@ -12,7 +12,7 @@ import java.io.File;
 /**
  * Allows getting a user image
  */
-public class ImageGetterImpl implements ImageGetterInterface {
+public class PhotoGetterImpl implements PhotoGetterInterface {
 
 	@Override
 	public void takePhotoWithCameraApp(Activity activity, @NonNull File imageFile) {
