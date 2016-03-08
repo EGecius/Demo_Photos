@@ -14,10 +14,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import retrofit.RetrofitSetup;
+
 public class MainActivity extends AppCompatActivity {
-
-
+	
 	PhotoFilesUtils photoFilesUtils = new PhotoFilesUtils();
+	PhotoUploader photoUploader = new PhotoUploader(new RetrofitSetup().getService());
 
 	private File currentImageFile;
 	/** Request code */
@@ -78,10 +80,15 @@ public class MainActivity extends AppCompatActivity {
 			boolean isResultOk = isResultOk(resultCode);
 
 			showImage();
+			uploadImage();
 
 			Log.i("Eg:MainActivity:50", "onActivityResult requestCode " + requestCode);
 			Log.i("Eg:MainActivity:52", "onActivityResult isResultOk " + isResultOk);
 		}
+	}
+
+	private void uploadImage() {
+		photoUploader.upload(currentImageFile);
 	}
 
 	private void showImage() {
